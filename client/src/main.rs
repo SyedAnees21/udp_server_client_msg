@@ -25,7 +25,8 @@ fn main() {
 
     let mut buf= [0; 40];
     
-    for _i in 0..3{
+    loop {
+        for _ in 1..=2{
         socket.recv(&mut buf).expect("Could not get the datagram");
         let json_str = (str::from_utf8(&buf).expect("unable to parse")).trim_matches('\0').to_string();
         
@@ -36,8 +37,10 @@ fn main() {
         packets_list.push(recieved_data);
         // println!("{}",c_index);
     }
+    c_index=0;
     println!("{} {} {}", packets_list[0].x, packets_list[0].y, packets_list[0].z);
     println!("All Packets {:#?}", packets_list.iter());
+}
 
 }
 

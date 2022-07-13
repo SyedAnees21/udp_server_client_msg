@@ -1,7 +1,8 @@
 // use std::{thread,time};
 use std::{net::UdpSocket,
           time::Duration,
-          str
+          str,
+          io::ErrorKind
         };
 use serde::{Serialize, Deserialize};
 use serde_json;
@@ -67,13 +68,22 @@ fn main() {
             /*
             // Recieving the responses from Client
             //  */
-            let result = socket.recv_from(&mut buf);
+            let result = socket.recv_from(&mut buf);/*.unwrap_or_else(|_|
+                {
+               return (0, SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080)); 
+               });
+               let (bytes , src_addr) = result;
+                */
 
+            
             let (bytes , src_addr)= match result {
                                             Ok(res) => res,
-                                            Err(e) =>{
-                                                drop(e);
-                                                continue
+                                            Err(e) => match e.kind(){
+                                                                ErrorKind::TimedOut => {continue},
+                                                                _ =>{
+                                                                    println!("{:?}", e);
+                                                                    continue;
+                                                                }
                                           }
             };   
             
