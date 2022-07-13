@@ -26,6 +26,7 @@ fn main() {
     let mut buf= [0; 40];
 
     loop {
+        
         let mut c_index:i32 = 0;
 
         for i in 0..=1 {
@@ -36,7 +37,7 @@ fn main() {
             
             packets_list.push(recieved_data);
 
-            c_index = packet_validation(c_index, &socket , &mut packets_list , i); 
+            c_index = packet_validation( c_index, &socket , &mut packets_list , i); 
         }
         println!("All Packets {:#?}", packets_list.iter());
      }
@@ -46,17 +47,8 @@ fn main() {
 
 
 
-fn packet_validation(mut index:i32, sock:&UdpSocket,  list:&mut Vec<SeqData>, i:usize) -> i32 {
+fn packet_validation( mut index:i32, sock:&UdpSocket,  list:&mut Vec<SeqData>, i:usize) -> i32 {
     
-//     if recieved.packet_index - index == 1 {
-//         index = recieved.packet_index;
-//         println!("Packet: {} recieved successfuly",index);
-//     }else if recieved.packet_index - index == 0 {
-//         println!("duplicate packet recieved");
-//     }else {
-//         println!("Number of packet lost: {}", recieved.packet_index-index);
-//     }
-
     match  list[i].packet_index - index {
         1 => {
              index = list[i].packet_index;
@@ -71,7 +63,6 @@ fn packet_validation(mut index:i32, sock:&UdpSocket,  list:&mut Vec<SeqData>, i:
     
         },
         _ => {
-            
 
             let mut buf= [0; 40];
     
