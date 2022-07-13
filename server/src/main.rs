@@ -1,10 +1,9 @@
 // use std::{thread,time};
-use std::{net::{UdpSocket, SocketAddr},
+use std::{net::UdpSocket,
           time::Duration,
-          str,
-          io::ErrorKind
+          str
         };
-use serde::{Serialize, Deserialize, __private::de::TagContentOtherField, ser::Error};
+use serde::{Serialize, Deserialize};
 use serde_json;
 
 #[derive(Serialize,Debug)]
@@ -66,24 +65,17 @@ fn main() {
 
 
             /*
-            Recieving the responses from Client
-             */
+            // Recieving the responses from Client
+            //  */
             let result = socket.recv_from(&mut buf);
 
-            let res = match result {
-                Ok(res) => res,
-                _ => ()
-                // Err(e) =>{ println!("{e}");
-                //                   return continue},
+            let (bytes , src_addr)= match result {
+                                            Ok(res) => res,
+                                            Err(e) =>{
+                                                drop(e);
+                                                continue
+                                          }
             };   
-
-            ///////////////////////////////////////////////////////////
-            // let msg_frm_client = str::from_utf8(&buf[..bytes])
-            //                                 .expect("No message from client")
-            //                                 .to_string();
-            // let response_from_client: ClientResponse = serde_json::from_str(&msg_frm_client.as_str()).expect("Unable to parse");
-
-            let (bytes , src_addr) =res;
             
             // let (bytes , src_addr) = socket.recv_from(&mut buf).expect("unable to recieve");
             let msg_frm_client = str::from_utf8(&buf[..bytes])
