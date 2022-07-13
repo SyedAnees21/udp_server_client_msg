@@ -35,8 +35,14 @@ fn main() {
             let json_str = (str::from_utf8(&buf).expect("unable to parse")).trim_matches('\0').to_string();
             let recieved_data:SeqData = serde_json::from_str(json_str.as_str()).unwrap();
             
+            /*
+            pushing the data on to the vector 
+            */
             packets_list.push(recieved_data);
 
+            /*
+            validation call to verify the packets in the list recieved
+             */
             c_index = packet_validation( c_index, &socket , &mut packets_list , i); 
         }
         println!("All Packets {:#?}", packets_list.iter());
@@ -50,20 +56,22 @@ fn main() {
 fn packet_validation( mut index:i32, sock:&UdpSocket,  list:&mut Vec<SeqData>, i:usize) -> i32 {
     
     match  list[i].packet_index - index {
-        1 => {
-             index = list[i].packet_index;
+    
+        1 => {                                                           //if all OKAY!
+            /*Acknowleding the server packets are intact!*/ 
+            index = list[i].packet_index;
                 
              let response = ClientResponse{packet_index:0};
              let res_json = serde_json::to_string(&response).expect("Could not parse response");
 
              sock.send(res_json.as_bytes()).unwrap();
         },
-        0 => {
+        0 => {                                                           //if the same packet is recieved twice
             println!("Packet {}  recieved twice", list[i].packet_index);
     
         },
-        _ => {
-
+        _ => {                                                           //if the certain packet is missing
+            /*Requesting the server for the missing packet */
             let mut buf= [0; 40];
     
             let response = ClientResponse{packet_index:list[i].packet_index - index};

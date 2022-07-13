@@ -68,14 +68,7 @@ fn main() {
             /*
             // Recieving the responses from Client
             //  */
-            let result = socket.recv_from(&mut buf);/*.unwrap_or_else(|_|
-                {
-               return (0, SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080)); 
-               });
-               let (bytes , src_addr) = result;
-                */
-
-            
+            let result = socket.recv_from(&mut buf);
             let (bytes , src_addr)= match result {
                                             Ok(res) => res,
                                             Err(e) => match e.kind(){
@@ -86,8 +79,6 @@ fn main() {
                                                                 }
                                           }
             };   
-            
-            // let (bytes , src_addr) = socket.recv_from(&mut buf).expect("unable to recieve");
             let msg_frm_client = str::from_utf8(&buf[..bytes])
                                             .expect("No message from client")
                                             .to_string();
